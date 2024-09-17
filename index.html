@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your external CSS -->
+    <script src="scripts.js" defer></script> <!-- Link to your external JavaScript -->
+    <style>
+        body {
+            background-color: #f0f8ff; /* Light sky blue background */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling */
+        }
+        .box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #add8e6; /* Light blue outline */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 320px; /* Consistent width */
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #000080; /* Navy blue */
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures consistent sizing */
+            border-radius: 5px; /* Rounded corners */
+            border: 1px solid #ccc; /* Light border for input and select */
+        }
+        button {
+            background-color: #87ceeb; /* Light blue */
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #6495ed; /* Slightly darker blue */
+        }
+
+        /* Responsive design adjustments */
+        @media (max-width: 600px) {
+            .box {
+                width: 90%; /* Adjust width for smaller screens */
+                padding: 20px; /* Reduce padding */
+            }
+            input, select, button {
+                font-size: 14px; /* Adjust font size for smaller screens */
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .box {
+                width: 400px; /* Increase width for larger screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>Shorthand Typing Test</h1>
+        <input type="text" placeholder="Enter your name" id="name-input" />
+        <select id="test-select">
+            <option value="Skill Test Group C">Stenographer Skill Test Group C</option>
+            <option value="Skill Test Group D">Stenographer Skill Test Group D</option>
+            <option value="Skill Test Practice">Skill Test Practice</option>
+        </select>
+        <button onclick="startTest()">Start Test</button>
+    </div>
+</body>
+</html>

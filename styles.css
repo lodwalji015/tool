@@ -1,0 +1,58 @@
+body {
+    background-color: #f0f8ff; /* Light sky blue background */
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.box {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    border: 2px solid #add8e6; /* Light blue outline */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 320px; /* Consistent width */
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    color: #000080; /* Navy blue */
+    margin-bottom: 20px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    box-sizing: border-box; /* Ensures consistent sizing */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #ccc; /* Light border for input and select */
+}
+
+button {
+    background-color: #87ceeb; /* Light blue */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #6495ed; /* Slightly darker blue */
+}
+
+/* Responsive design adjustments */
+@media (max-width: 600px) {
+    .box {
+        width: 100%; /* Full width on smaller screens */
+        padding: 20px; /* Reduce padding */
+    }
+    input, select, button {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+}

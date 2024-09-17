@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
+    <style>
+        body {
+            background-color: #f0f8ff; /* Light sky blue background */
+            margin: 0;
+            position: relative;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+        }
+        #candidate-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000080; /* Navy blue */
+        }
+        #typing-area {
+            position: absolute;
+            left: 20px; /* Positioned on the left side */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 525px;
+            height: 281px;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 20px;
+            overflow-y: auto; /* Allow vertical scrolling */
+            white-space: pre-wrap; /* Preserve whitespace formatting */
+        }
+        .timer-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+        }
+        .timer {
+            font-size: 24px;
+            color: #000080; /* Navy blue */
+        }
+        .pause-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #87ceeb; /* Light blue */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .pause-button:hover {
+            background-color: #6495ed; /* Slightly darker blue */
+        }
+        #submit-button {
+            position: absolute;
+            left: 465px; /* Align with the left side of the text area */
+            top: calc(50% + 281px + -140px); /* Positioned below the text area with some margin */
+            padding: 5px 15px;
+            background-color: #87ceeb;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: auto;
+        }
+        #submit-button:hover {
+            background-color: #6495ed;
+        }
+
+        /* Responsive design adjustments */
+        @media (max-width: 600px) {
+            #typing-area {
+                width: calc(100% - 40px); /* Adjust width for smaller screens */
+                left: 20px; /* Keep it aligned from left */
+                transform: none; /* Remove vertical centering for smaller screens */
+                top: 20px; /* Adjust top margin */
+                height: 200px; /* Reduce height */
+            }
+            #candidate-info {
+                font-size: 16px; /* Adjust font size */
+                left: 10px; /* Keep aligned */
+                top: 10px; /* Keep aligned */
+            }
+            .timer-container {
+                right: 10px; /* Adjust right margin */
+            }
+            #submit-button {
+                left: calc(100% - 140px); /* Adjust positioning for smaller screens */
+                top: auto; /* Remove top positioning */
+                bottom: 20px; /* Align at the bottom */
+            }
+        }
+
+        @media (min-width: 1200px) {
+            #typing-area {
+                width: 525px; /* Ensure consistent width on larger screens */
+                height: 281px; /* Ensure consistent height */
+            }
+            #submit-button {
+                left: 465px; /* Ensure consistent positioning on larger screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="candidate-info"></div>
+    <textarea id="typing-area" placeholder="Start typing here..."></textarea>
+    <div class="timer-container">
+        <div id="timer" class="timer">Time: 00:00</div>
+        <button id="pause-button" class="pause-button">Pause</button>
+    </div>
+    <button id="submit-button">Submit</button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const candidateName = localStorage.getItem("candidateName");
+            const testType = localStorage.getItem("testType");
+            const candidateInfo = document.getElementById("candidate-info");
+            const timerDisplay = document.getElementById("timer");
+            const typingArea = document.getElementById("typing-area");
+            const submitButton = document.getElementById("submit-button");
+            const pauseButton = document.getElementById("pause-button");
+
+            let timer = 0;
+            let timerLimit;
+            let timerInterval;
+            let isPaused = false;
+
+            // Display candidate information
+            if (candidateName && testType) {
+                candidateInfo.textContent = `Candidate: ${candidateName}, Test Type: ${testType}`;
+            } else {
+                candidateInfo.textContent = "No candidate information available.";
+            }
+
+            // Set timer limit based on test type
+            switch (testType) {
+                case "Skill Test Group C":
+                    timerLimit = 40 * 60; // 40 minutes in seconds
+                    break;
+                case "Skill Test Group D":
+                    timerLimit = 50 * 60; // 50 minutes in seconds
+                    break;
+                case "Skill Test Practice":
+                    timerLimit = 60 * 60; // 60 minutes in seconds
+                    break;
+                default:
+                    timerLimit = 40 * 60; // Default to 40 minutes
+            }
+
+            function updateTimer() {
+                const minutes = String(Math.floor(timer / 60)).padStart(2, '0');
+                const seconds = String(timer % 60).padStart(2, '0');
+                timerDisplay.textContent = `Time: ${minutes}:${seconds}`;
+                if (timer >= timerLimit) {
+                    clearInterval(timerInterval);
+                    alert("Time is up!");
+                    submitTest();
+                }
+            }
+
+            function startTimer() {
+                timerInterval = setInterval(() => {
+                    if (!isPaused) {
+                        timer++;
+                        updateTimer();
+                    }
+                }, 1000);
+            }
+
+            function pauseTimer() {
+                isPaused = !isPaused;
+                pauseButton.textContent = isPaused ? "Resume" : "Pause";
+            }
+
+            function submitTest() {
+                clearInterval(timerInterval);
+                localStorage.setItem("typedText", typingArea.value);
+                localStorage.setItem("timeTaken", timer);
+                window.location.href = "result.html";
+            }
+
+            pauseButton.addEventListener("click", pauseTimer);
+
+            submitButton.addEventListener("click", submitTest);
+
+            // Scroll to the end when typing
+            typingArea.addEventListener('input', () => {
+                typingArea.scrollTop = typingArea.scrollHeight;
+            });
+
+            // Start timer on page load if the typing area is focused
+            typingArea.addEventListener("focus", startTimer, { once: true });
+        });
+    </script>
+</body>
+</html>

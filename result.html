@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result</title>
+    <style>
+        body {
+            background-color: #f0f8ff; /* Light sky blue background */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 0;
+            overflow: hidden; /* Prevent scrolling on the body */
+        }
+        .container {
+            width: calc(100% - 40px); /* Full width with some margin */
+            max-width: 1800px; /* Maximum width */
+            height: auto; /* Auto height to fit content */
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #add8e6; /* Light blue outline */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            overflow: hidden; /* Hide overflow from the container */
+        }
+        h1 {
+            color: #000080; /* Navy blue */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .info {
+            margin-bottom: 10px; /* Reduced margin */
+        }
+        .info p {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .matter {
+            font-size: 16px;
+            margin-top: 5px; /* Reduced margin */
+            line-height: 1.5; /* Improve readability */
+        }
+        .box {
+            border: 2px solid #000080; /* Navy blue border */
+            padding: 20px; /* Space between the border and the content */
+            margin: 5px; /* Space outside the border */
+            width: 100%; /* Full width of the container */
+            max-width: 1400px; /* Maximum width of the box */
+            height: 400px; /* Fixed height for box */
+            background-color: #f9f9f9; /* Light grey background color */
+            overflow-y: auto; /* Add vertical scrollbar if content overflows */
+            box-sizing: border-box; /* Include padding and border in element's total width and height */
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Space between buttons */
+            margin-top: 20px;
+        }
+        .buttons-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #87ceeb; /* Light blue */
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .buttons-container button:hover {
+            background-color: #6495ed; /* Slightly darker blue */
+        }
+
+        /* Responsive design adjustments */
+        @media (max-width: 600px) {
+            .container {
+                width: calc(100% - 20px); /* Adjust width for smaller screens */
+                padding: 10px; /* Reduce padding */
+            }
+            .box {
+                height: 300px; /* Reduce height for smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Result</h1>
+        <div class="info">
+            <p><strong>Candidate Name:</strong> <span id="candidate-name"></span></p>
+            <p><strong>Test Type:</strong> <span id="test-type"></span></p>
+        </div>
+        <div class="matter">
+            <div class="box" id="typed-matter-box">
+                <div id="typed-matter"></div>
+            </div>
+        </div>
+    </div>
+    <div class="results">
+        <p><strong>Number of Words Typed:</strong> <span id="word-count"></span></p>
+    </div>
+    <div class="buttons-container">
+        <button onclick="window.location.href='index.html'">Back to Login</button>
+        <button id="save-pdf-button">Save as PDF</button>
+    </div>
+
+    <!-- Include jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const { jsPDF } = window.jspdf;
+
+            // Fetch stored candidate information and typed matter
+            const candidateName = localStorage.getItem("candidateName") || "N/A";
+            const testType = localStorage.getItem("testType") || "N/A";
+            const typedMatter = localStorage.getItem("typedText") || "No matter typed.";
+
+            // Display candidate information and typed matter on the page
+            document.getElementById("candidate-name").textContent = candidateName;
+            document.getElementById("test-type").textContent = testType;
+            document.getElementById("typed-matter").textContent = typedMatter;
+
+            // Calculate and display the number of words typed
+            const wordCount = typedMatter.trim().split(/\s+/).length;
+            document.getElementById("word-count").textContent = wordCount;
+
+            // Save the result as a PDF when the "Save as PDF" button is clicked
+            document.getElementById("save-pdf-button").addEventListener("click", function() {
+                const doc = new jsPDF({
+                    orientation: "portrait",
+                    unit: "mm",
+                    format: "a4"
+                });
+
+                // Define margins and line height
+                const margin = 15;
+                const pageWidth = doc.internal.pageSize.getWidth() - 2 * margin;
+                const pageHeight = doc.internal.pageSize.getHeight() - 2 * margin;
+                const lineHeight = 10;
+
+                // Add candidate details with underlining and color
+                doc.setFontSize(12);
+                doc.setTextColor("#000000"); // Navy blue color
+                doc.text(`Candidate Name: ${candidateName}`, margin, margin + 10);
+
+                // Underline the candidate name
+                const textWidth = doc.getTextWidth(`Candidate Name: ${candidateName}`);
+                doc.setDrawColor("#000000"); // Navy blue color for underline
+                doc.setLineWidth(0.5);
+                doc.line(margin, margin + 12, margin + textWidth, margin + 12);
+
+                // Add typed matter with proper pagination
+                const typedMatterLines = typedMatter.split('\n');
+                let y = margin + 15;
+
+                typedMatterLines.forEach(line => {
+                    if (doc.getTextWidth(line) > pageWidth) {
+                        // Break long lines into smaller chunks
+                        const words = line.split(' ');
+                        let currentLine = '';
+                        words.forEach(word => {
+                            if (doc.getTextWidth(currentLine + word) > pageWidth) {
+                                doc.text(currentLine, margin, y);
+                                currentLine = word + ' ';
+                                y += lineHeight;
+                            } else {
+                                currentLine += word + ' ';
+                            }
+                        });
+                        doc.text(currentLine, margin, y);
+                    } else {
+                        // Add line normally if it fits
+                        doc.text(line, margin, y);
+                    }
+                    y += lineHeight;
+
+                    if (y > pageHeight) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                });
+
+                // Save the PDF
+                doc.save("result.pdf");
+            });
+        });
+    </script>
+</body>
+</html>
